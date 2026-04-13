@@ -11,8 +11,9 @@
 #' @param dentition `"permanent"` or `"primary"`.
 #' @param teeth_per_quadrant Integer 5–8 (default derived from `dentition`).
 #' @param title,subtitle Plot title/subtitle.
-#' @param color_low,color_high Gradient endpoints.
-#' @param na_color Fill for missing surfaces.
+#' @param color_low,color_high Gradient endpoints (default `"#FFFFFF"` to
+#'   `"#C62828"`).
+#' @param na_color Fill for missing surfaces (default `"grey90"`).
 #' @param max_val Upper limit for the colour scale (auto-detected if NULL).
 #' @param legend_title Legend title.
 #' @param show_roots Logical; draw root caries bars.
@@ -20,11 +21,16 @@
 #'   `c("buc","lin","mes","dis","occ","rootb","rootl","rootm","rootd")`.
 #'   Use `c("buc","lin","mes","dis","occ")` for coronal-only, or
 #'   `c("rootb","rootl","rootm","rootd")` for root-only.
-#' @param show_labels Logical; show surface abbreviation labels.
+#' @param show_labels Logical; show surface abbreviation labels (B, L, M, D,
+#'   O, RB, RL, RM, RD) inside each surface polygon. Set to `FALSE` for a
+#'   cleaner look, especially when exporting at small sizes.
 #' @param label_size Numeric; size of surface labels.
 #' @param strata Optional column name for stratification. When provided,
-#'   returns a list of ggplots (one per stratum) or a combined plot using
-#'   [patchwork::wrap_plots()] depending on `combine`.
+#'   produces one panel per stratum, combined or as a list.
+#' @param strata_labels Optional named character vector to relabel strata in
+#'   panel titles. Names should match strata values, values are display labels.
+#'   For example: `c("1" = "SDF", "2" = "ART + FV")`. When NULL (default),
+#'   strata values are used as-is.
 #' @param combine Logical; if `strata` is set, combine panels into one plot
 #'   (default TRUE) or return a named list.
 #' @param ncol Number of columns when combining stratified panels.
@@ -45,7 +51,8 @@ build_odontograph <- function(data, value_col = "prop",
                               teeth_per_quadrant = NULL,
                               title = "Surface Odontograph",
                               subtitle = NULL,
-                              color_low = "white", color_high = "red",
+                              color_low = "#FFFFFF",
+                              color_high = "#C62828",
                               na_color = "grey90", max_val = NULL,
                               legend_title = "Proportion",
                               show_roots = TRUE,
@@ -54,6 +61,7 @@ build_odontograph <- function(data, value_col = "prop",
                               show_labels = TRUE,
                               label_size = 1.8,
                               strata = NULL,
+                              strata_labels = NULL,
                               combine = TRUE,
                               ncol = 1) {
 
@@ -62,10 +70,16 @@ build_odontograph <- function(data, value_col = "prop",
     strata_vals <- unique(data[[strata]])
     plots <- lapply(strata_vals, function(sv) {
       sub_data <- data[data[[strata]] == sv, ]
+      # Use custom label if provided, otherwise use raw value
+      display_label <- if (!is.null(strata_labels) && as.character(sv) %in% names(strata_labels)) {
+        strata_labels[[as.character(sv)]]
+      } else {
+        as.character(sv)
+      }
       build_odontograph(
         data = sub_data, value_col = value_col,
         dentition = dentition, teeth_per_quadrant = teeth_per_quadrant,
-        title = paste0(title, " \u2014 ", sv), subtitle = subtitle,
+        title = paste0(title, " \u2014 ", display_label), subtitle = subtitle,
         color_low = color_low, color_high = color_high,
         na_color = na_color, max_val = max_val,
         legend_title = legend_title, show_roots = show_roots,
@@ -89,9 +103,9 @@ build_odontograph <- function(data, value_col = "prop",
   tpq <- max(cfg$num)
 
   tooth_size   <- 1
-  gap          <- 0.3
-  midline_gap  <- 0.6
-  row_gap      <- 0.8
+  gap          <- 0.45
+  midline_gap  <- 0.7
+  row_gap      <- 1.0
 
   upper_right <- tibble::tibble(quadrant="ur", num=tpq:1,
                                  x_pos=(seq_len(tpq)-1)*(tooth_size+gap))
@@ -146,7 +160,15 @@ build_odontograph <- function(data, value_col = "prop",
   midline_x <- max(upper_right$x_pos) + tooth_size + midline_gap/2
   upper_y   <- row_gap + tooth_size/2
   lower_y   <- -tooth_size - row_gap + tooth_size/2
-  label_x   <- -0.8
+  label_x   <- -1.0
+
+  side_label_y <- if (nrow(outlines_df) > 0) {
+    max(outlines_df$y) + 0.7
+  } else if (nrow(roots_df) > 0) {
+    max(roots_df$y) + 0.7
+  } else {
+    row_gap + tooth_size + 0.7
+  }
 
   p <- ggplot2::ggplot()
 
@@ -177,14 +199,6 @@ build_odontograph <- function(data, value_col = "prop",
       size=label_size, color="grey40", fontface="bold")
   }
 
-  side_label_y <- if (nrow(outlines_df) > 0) {
-    max(outlines_df$y) + 0.6
-  } else if (nrow(roots_df) > 0) {
-    max(roots_df$y) + 0.6
-  } else {
-    row_gap + tooth_size + 0.6
-  }
-
   p <- p +
     ggplot2::geom_text(data=nums_df,
       ggplot2::aes(x=.data$x, y=.data$y, label=toupper(.data$label)),
@@ -212,7 +226,9 @@ build_odontograph <- function(data, value_col = "prop",
       plot.title=ggplot2::element_text(face="bold", size=12, hjust=0.5),
       plot.subtitle=ggplot2::element_text(size=9, hjust=0.5, color="grey40"),
       legend.position="right",
-      plot.margin=ggplot2::margin(10,10,10,30)
+      plot.margin=ggplot2::margin(10,10,10,30),
+      plot.background=ggplot2::element_rect(fill="white", color=NA),
+      panel.background=ggplot2::element_rect(fill="white", color=NA)
     )
 
   p

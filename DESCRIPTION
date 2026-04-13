@@ -1,6 +1,6 @@
 Package: tooth
 Title: Dental Public Health Indices and Odontograph Visualizations
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: person("David", "Selvaraj", , "dms256@case.edu",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4055-9493"))
@@ -16,7 +16,7 @@ BugReports: https://github.com/ddmsel/tooth/issues
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+RoxygenNote: 7.3.2
 Depends:
     R (>= 3.5.0)
 Imports:

@@ -79,22 +79,22 @@ draw_tooth <- function(tooth_id, quadrant, tooth_num, is_upper,
   }
 
   # ---- Root bars: 4 surfaces ----
-  root_h  <- sz * 0.14;  root_w  <- sz * 0.5
-  root_side_w <- sz * 0.14;  root_side_h <- sz * 0.5
+  root_h  <- sz * 0.15;  root_w  <- sz * 0.55
+  root_side_w <- sz * 0.15;  root_side_h <- sz * 0.55
   root_cx <- x_offset + sz / 2
   root_cy <- y_offset + sz / 2
 
   if (is_upper) {
-    rootb_y0 <- y1 + sz*0.04; rootb_y1 <- rootb_y0 + root_h
-    rootl_y1 <- y0 - sz*0.04; rootl_y0 <- rootl_y1 - root_h
+    rootb_y0 <- y1 + sz*0.08; rootb_y1 <- rootb_y0 + root_h
+    rootl_y1 <- y0 - sz*0.08; rootl_y0 <- rootl_y1 - root_h
   } else {
-    rootl_y0 <- y1 + sz*0.04; rootl_y1 <- rootl_y0 + root_h
-    rootb_y1 <- y0 - sz*0.04; rootb_y0 <- rootb_y1 - root_h
+    rootl_y0 <- y1 + sz*0.08; rootl_y1 <- rootl_y0 + root_h
+    rootb_y1 <- y0 - sz*0.08; rootb_y0 <- rootb_y1 - root_h
   }
 
   # Mesial/distal root bars on the interproximal sides
-  mes_side <- ifelse(is_right, x1 + sz*0.04, x0 - sz*0.04 - root_side_w)
-  dis_side <- ifelse(is_right, x0 - sz*0.04 - root_side_w, x1 + sz*0.04)
+  mes_side <- ifelse(is_right, x1 + sz*0.08, x0 - sz*0.08 - root_side_w)
+  dis_side <- ifelse(is_right, x0 - sz*0.08 - root_side_w, x1 + sz*0.08)
 
   make_rect <- function(x_left, y_bot, w, h) {
     list(x = c(x_left, x_left+w, x_left+w, x_left),

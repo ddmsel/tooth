@@ -1,128 +1,170 @@
-# tooth
+# tooth <img src="man/figures/odontograph_coronal.png" align="right" width="400" />
 
-Dental public health analysis tools for R.
+<!-- badges: start -->
+<!-- badges: end -->
+
+**tooth** is an R package for dental public health research. It provides
+standardised caries index calculations and publication-ready odontograph
+heatmap visualisations from clinical examination data.
+
+## Why tooth?
+
+Dental epidemiological studies routinely compute DMFT/DMFS indices and
+visualise caries patterns across the dental arch, yet there is no
+dedicated R package for these tasks. Researchers typically write ad-hoc
+scripts with hardcoded ICDAS thresholds and manual ggplot2 layouts.
+**tooth** replaces those one-off scripts with tested, documented,
+flexible functions that work across study designs.
 
 ## Features
 
-- **Odontograph heatmaps** with 5 coronal surfaces (B/L/M/D/O) + 4 root surfaces (RB/RL/RM/RD)
-- **Selective surfaces**: show coronal-only, root-only, or any subset
-- **Stratified odontographs**: facet by treatment arm, site, or any variable
-- **DMFT/dmft and DMFS/dmfs** with separate root vs coronal caries tallies
-- **Long or wide format** input (auto-pivots wide → long)
-- **Primary and permanent** dentition, 5–8 teeth per quadrant
-- **Tooth numbering** conversion: FDI ↔ Universal ↔ quadrant
+- **Caries indices** — DMFT/dmft and DMFS/dmfs with configurable ICDAS
+  thresholds, activity codes, and restoration codes. One function call
+  replaces 30+ lines of `mutate()`/`group_by()`/`summarise()`.
+- **Root vs coronal separation** — Tally root caries (`RDT`, `RDS`)
+  independently from coronal indices in the same call.
+- **Odontograph heatmaps** — Colour-coded dental arch diagrams with
+  5 coronal surfaces (B, L, M, D, O) and up to 4 root surfaces
+  (RB, RL, RM, RD) per tooth.
+- **Flexible dentition** — Primary (5 teeth/quadrant) or permanent
+  (5–8 teeth/quadrant).
+- **Stratification** — Facet odontographs by treatment arm, site,
+  time-point, or any grouping variable with customisable panel labels.
+- **Long or wide input** — Auto-pivots wide-format data to long.
+- **Tooth numbering** — Convert between FDI (ISO 3950), Universal (ADA),
+  and quadrant notation.
 
 ## Installation
 
 ```r
-devtools::install("path/to/tooth")
-# or
-install.packages("tooth_0.2.0.tar.gz", repos = NULL, type = "source")
+# From GitHub
+devtools::install_github("ddmsel/tooth")
+
+# From local tarball
+install.packages("tooth_0.4.0.tar.gz", repos = NULL, type = "source")
 ```
 
-## Odontograph Examples
+## Gallery
 
-### Coronal surfaces only (7 teeth/quadrant)
+### Coronal surfaces
 
 ```r
-library(tooth)
-d <- expand.grid(
-  tooth_num     = paste0(rep(c("ur","ul","lr","ll"), each = 7), 1:7),
-  tooth_surface = c("buc","lin","mes","dis","occ"),
-  stringsAsFactors = FALSE
+build_odontograph(
+  data = decay_data,
+  teeth_per_quadrant = 7,
+  surfaces = c("buc", "lin", "mes", "dis", "occ"),
+  title = "Active Caries by Surface"
 )
-d$prop <- runif(nrow(d), 0, 0.4)
-
-build_odontograph(d, teeth_per_quadrant = 7,
-                  surfaces = c("buc","lin","mes","dis","occ"))
 ```
 
-### Root caries only
+<img src="man/figures/odontograph_coronal.png" width="100%" />
+
+### With root surfaces
 
 ```r
-d_root <- expand.grid(
-  tooth_num     = paste0(rep(c("ur","ul","lr","ll"), each = 7), 1:7),
-  tooth_surface = c("rootb","rootl","rootm","rootd"),
-  stringsAsFactors = FALSE
+build_odontograph(
+  data = decay_data,
+  teeth_per_quadrant = 7,
+  surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl"),
+  title = "Active Caries — Coronal and Root Surfaces"
 )
-d_root$prop <- runif(nrow(d_root), 0, 0.2)
-
-build_odontograph(d_root, teeth_per_quadrant = 7,
-                  surfaces = c("rootb","rootl","rootm","rootd"),
-                  title = "Root Caries Odontograph",
-                  color_high = "#4A148C")
 ```
 
-### Primary dentition
-
-```r
-build_odontograph(d_primary, dentition = "primary",
-                  surfaces = c("buc","lin","mes","dis","occ"),
-                  show_roots = FALSE,
-                  title = "Primary Dentition Caries")
-```
+<img src="man/figures/odontograph_root.png" width="100%" />
 
 ### Stratified by treatment arm
 
 ```r
-# data must include a 'treatment' column
-build_odontograph(d, strata = "treatment",
-                  title = "Caries by Arm", ncol = 1)
+build_odontograph(
+  data = decay_by_trt,
+  teeth_per_quadrant = 7,
+  strata = "treatment",
+  strata_labels = c("1" = "SDF", "2" = "ART + FV"),
+  title = "Active Caries"
+)
 ```
 
-## DMFT / DMFS Examples
+<img src="man/figures/odontograph_stratified.png" width="100%" />
 
-### Basic (long format)
+### Clean look (no surface labels)
 
 ```r
-# One row per tooth-surface with: record_id, tooth_num, tooth_surface,
-# lesion_code, act, filling_code, code
-results <- calc_dmft(surface_data)
-results <- calc_dmfs(surface_data)
+build_odontograph(
+  data = decay_data,
+  teeth_per_quadrant = 7,
+  show_labels = FALSE,
+  title = "Active Caries — No Surface Labels"
+)
 ```
 
-### With root caries separated
+<img src="man/figures/odontograph_nolabels.png" width="100%" />
+
+## Quick Start
+
+### DMFT calculation
 
 ```r
-results <- calc_dmft(surface_data,
-                     root_lesion_col = "lesion_code")
+library(tooth)
+data(sim_exam)
+
+# Basic DMFT from surface-level ICDAS data
+dmft <- calc_dmft(sim_exam)
+head(dmft)
+#>   record_id DT FT MT DFT DMFT num_teeth DT_yn DFT_yn
+
+# With repeated measures and stratification
+dmft <- calc_dmft(
+  sim_exam,
+  group = "redcap_event_name",
+  strata = "treatment"
+)
+
+# Separate root caries
+dmft <- calc_dmft(sim_exam, root_lesion_col = "lesion_code")
 # Returns DT (coronal) + RDT (root) separately
 ```
 
-### Repeated measures + stratification
+### DMFS calculation
 
 ```r
-results <- calc_dmft(surface_data,
-                     group = "redcap_event_name",
-                     strata = "treatment")
+dmfs <- calc_dmfs(sim_exam)
+dmfs <- calc_dmfs(sim_exam, root_lesion_col = "lesion_code")
+```
+
+### Custom ICDAS thresholds
+
+```r
+calc_dmft(
+  data,
+  decayed_codes  = c(3, 4, 5, 6),
+  activity_codes = c(2),
+  filled_codes   = c(1, 2),
+  present_codes  = c(2, 3, 4, 5),
+  missing_codes  = c(1)
+)
 ```
 
 ### Wide format input
 
 ```r
 # Columns like: ur1_buc_les, ur1_buc_fil, ur1_buc_act, ur1_code
-results <- calc_dmft(wide_data, format = "wide")
+calc_dmft(wide_data, format = "wide")
 ```
 
-### Custom coding (primary dentition)
-
-```r
-results <- calc_dmft(primary_data,
-                     decayed_codes = c(3,4,5,6),
-                     filled_codes = c(1,2),
-                     present_codes = c(2,3,4,5))
-```
-
-## Tooth Number Conversion
+### Tooth numbering conversion
 
 ```r
 tooth_convert("11", from = "fdi", to = "quadrant")
-# "ur1"
+#> "ur1"
+
 tooth_convert("ur1", from = "quadrant", to = "universal")
-# "8"
+#> "8"
+
+tooth_convert(c("11", "21", "36", "46"), from = "fdi", to = "quadrant")
+#> "ur1" "ul1" "ll6" "lr6"
 ```
 
-## All Functions
+## Functions
 
 | Function | Description |
 |---|---|
@@ -133,3 +175,22 @@ tooth_convert("ur1", from = "quadrant", to = "universal")
 | `pivot_to_long()` | Wide → long format converter |
 | `tooth_config()` | Arch layout configuration |
 | `tooth_convert()` | FDI ↔ Universal ↔ quadrant numbering |
+
+## Citation
+
+If you use **tooth** in published research, please cite it:
+
+```
+Selvaraj D (2026). tooth: Dental Public Health Indices and Odontograph
+Visualizations. R package version 0.4.0.
+https://github.com/ddmsel/tooth
+```
+
+## Contributing
+
+Issues and pull requests welcome at
+[github.com/ddmsel/tooth](https://github.com/ddmsel/tooth/issues).
+
+## License
+
+MIT
