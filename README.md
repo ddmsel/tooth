@@ -16,22 +16,22 @@ glance across the full dental arch.
 
 ### Crown surfaces
 
-| Abbreviation | Surface | Description |
-|---|---|---|
-| **B** | Buccal | Cheek-facing surface |
-| **L** | Lingual | Tongue-facing surface |
-| **M** | Mesial | Forward-facing interproximal surface |
-| **D** | Distal | Backward-facing interproximal surface |
-| **O** | Occlusal | Biting/chewing surface |
+| Abbreviation | Surface |
+|---|---|
+| **B** | Buccal |
+| **L** | Lingual |
+| **M** | Mesial |
+| **D** | Distal |
+| **O** | Occlusal |
 
 ### Root surfaces
 
-| Abbreviation | Surface | Description |
-|---|---|---|
-| **RB** | Root-Buccal | Root surface on the cheek side |
-| **RL** | Root-Lingual | Root surface on the tongue side |
-| **RM** | Root-Mesial | Root surface on the mesial side |
-| **RD** | Root-Distal | Root surface on the distal side |
+| Abbreviation | Surface |
+|---|---|
+| **RB** | Root-Buccal |
+| **RL** | Root-Lingual |
+| **RM** | Root-Mesial |
+| **RD** | Root-Distal |
 
 ## Why tooth?
 
