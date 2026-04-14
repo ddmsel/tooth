@@ -17,6 +17,8 @@
 #' @param show_roots Logical; draw root surface bars (default TRUE).
 #' @param surfaces Character vector of surfaces to include. Omit any you
 #'   don't want drawn.
+#' @param display_label Optional custom label for the tooth number (e.g.
+#'   FDI notation `"11"` instead of `"ur1"`). When NULL, uses `tooth_id`.
 #'
 #' @return Named list of tibbles: crown, roots, labels, num_label, diags, outline.
 #' @export
@@ -25,7 +27,8 @@ draw_tooth <- function(tooth_id, quadrant, tooth_num, is_upper,
                        x_offset = 0, y_offset = 0,
                        tooth_size = 1, show_roots = TRUE,
                        surfaces = c("buc","lin","mes","dis","occ",
-                                    "rootb","rootl","rootm","rootd")) {
+                                    "rootb","rootl","rootm","rootd"),
+                       display_label = NULL) {
 
   sz  <- tooth_size
   ci  <- sz * 0.25
@@ -92,7 +95,6 @@ draw_tooth <- function(tooth_id, quadrant, tooth_num, is_upper,
     rootb_y1 <- y0 - sz*0.08; rootb_y0 <- rootb_y1 - root_h
   }
 
-  # Mesial/distal root bars on the interproximal sides
   mes_side <- ifelse(is_right, x1 + sz*0.08, x0 - sz*0.08 - root_side_w)
   dis_side <- ifelse(is_right, x0 - sz*0.08 - root_side_w, x1 + sz*0.08)
 
@@ -121,8 +123,7 @@ draw_tooth <- function(tooth_id, quadrant, tooth_num, is_upper,
                      group_id = paste0(tooth_id, "_", p$surface))
     })
   } else {
-    tibble::tibble(x=numeric(), y=numeric(), surface=character(),
-                   value=numeric(), tooth=character(), group_id=character())
+    empty_poly
   }
 
   # ---- Labels ----
@@ -159,12 +160,13 @@ draw_tooth <- function(tooth_id, quadrant, tooth_num, is_upper,
 
   # Tooth number label
   if (is_upper) {
-    num_y <- (if (show_roots && "rootl" %in% surfaces) rootl_y0 else y0) - sz*0.18
+    num_y <- (if (show_roots && "rootl" %in% surfaces) rootl_y0 else y0) - sz*0.25
   } else {
-    num_y <- (if (show_roots && "rootl" %in% surfaces) rootl_y1 else y1) + sz*0.18
+    num_y <- (if (show_roots && "rootl" %in% surfaces) rootl_y1 else y1) + sz*0.25
   }
 
-  num_label <- tibble::tibble(x=(x0+x1)/2, y=num_y, label=tooth_id, tooth=tooth_id)
+  disp <- if (!is.null(display_label)) display_label else tooth_id
+  num_label <- tibble::tibble(x=(x0+x1)/2, y=num_y, label=disp, tooth=tooth_id)
 
   crown_surfaces <- c("buc", "lin", "mes", "dis", "occ")
   has_crown <- any(crown_surfaces %in% surfaces)

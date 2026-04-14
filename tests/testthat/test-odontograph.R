@@ -83,3 +83,73 @@ test_that("build_odontograph strata with combine=FALSE returns list", {
   expect_equal(length(res), 2L)
   expect_s3_class(res[[1]], "ggplot")
 })
+
+test_that("draw_tooth uses display_label", {
+  sv <- data.frame(tooth_surface = "occ", prop = 0.5, stringsAsFactors = FALSE)
+  res <- draw_tooth("ur1", "ur", 1, TRUE, sv,
+                    surfaces = "occ", show_roots = FALSE,
+                    display_label = "11")
+  expect_equal(res$num_label$label, "11")
+})
+
+test_that("build_odontograph accepts numbering = fdi", {
+  d <- expand.grid(
+    tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
+    tooth_surface = c("buc", "occ"),
+    stringsAsFactors = FALSE
+  )
+  d$prop <- runif(nrow(d))
+
+  p <- build_odontograph(d, dentition = "primary",
+                         surfaces = c("buc", "occ"), show_roots = FALSE,
+                         numbering = "fdi")
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("build_odontograph accepts min_val and max_val", {
+  d <- expand.grid(
+    tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
+    tooth_surface = c("buc", "occ"),
+    stringsAsFactors = FALSE
+  )
+  d$prop <- runif(nrow(d), 0.2, 0.8)
+
+  p <- build_odontograph(d, dentition = "primary",
+                         surfaces = c("buc", "occ"), show_roots = FALSE,
+                         min_val = 0, max_val = 1)
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("build_odontograph accepts footnote", {
+  d <- expand.grid(
+    tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
+    tooth_surface = c("buc", "occ"),
+    stringsAsFactors = FALSE
+  )
+  d$prop <- runif(nrow(d))
+
+  p <- build_odontograph(d, dentition = "primary",
+                         surfaces = c("buc", "occ"), show_roots = FALSE,
+                         footnote = "B=Buccal, O=Occlusal")
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("build_odontograph accepts strata_labels and stats", {
+  d <- expand.grid(
+    treatment = c("A", "B"),
+    tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
+    tooth_surface = c("buc", "occ"),
+    stringsAsFactors = FALSE
+  )
+  d$prop <- runif(nrow(d))
+
+  stats_df <- data.frame(treatment = c("A", "B"), n = c(50, 55))
+
+  p <- build_odontograph(d, dentition = "primary",
+                         surfaces = c("buc", "occ"), show_roots = FALSE,
+                         strata = "treatment",
+                         strata_labels = c("A" = "SDF", "B" = "ART"),
+                         stats = stats_df,
+                         footnote = "Test footnote")
+  expect_s3_class(p, "gg")
+})

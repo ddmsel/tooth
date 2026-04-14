@@ -11,16 +11,25 @@ build_odontograph(
   teeth_per_quadrant = NULL,
   title = "Surface Odontograph",
   subtitle = NULL,
-  color_low = "white",
-  color_high = "red",
+  color_low = "#FFFFFF",
+  color_high = "#C62828",
   na_color = "grey90",
+  min_val = NULL,
   max_val = NULL,
   legend_title = "Proportion",
   show_roots = TRUE,
   surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl", "rootm", "rootd"),
   show_labels = TRUE,
   label_size = 1.8,
+  tooth_label_size = 3,
+  numbering = c("quadrant", "fdi", "universal"),
   strata = NULL,
+  strata_labels = NULL,
+  stats = NULL,
+  stats_test = NULL,
+  stats_var = NULL,
+  stats_raw = NULL,
+  footnote = NULL,
   combine = TRUE,
   ncol = 1
 )
@@ -38,28 +47,53 @@ column. If stratifying, include the column named in \code{strata}.}
 
 \item{title, subtitle}{Plot title/subtitle.}
 
-\item{color_low, color_high}{Gradient endpoints.}
+\item{color_low, color_high}{Gradient endpoints (default \code{"#FFFFFF"} to
+\code{"#C62828"}).}
 
-\item{na_color}{Fill for missing surfaces.}
+\item{na_color}{Fill for missing surfaces (default \code{"grey90"}).}
 
-\item{max_val}{Upper limit for the colour scale (auto-detected if NULL).}
+\item{min_val, max_val}{Lower and upper limits for the colour scale.
+Both auto-detected when NULL. Set manually to fix the range across
+multiple plots.}
 
 \item{legend_title}{Legend title.}
 
 \item{show_roots}{Logical; draw root caries bars.}
 
-\item{surfaces}{Character vector of surfaces to draw. Default all 9:
-\code{c("buc","lin","mes","dis","occ","rootb","rootl","rootm","rootd")}.
-Use \code{c("buc","lin","mes","dis","occ")} for coronal-only, or
-\code{c("rootb","rootl","rootm","rootd")} for root-only.}
+\item{surfaces}{Character vector of surfaces to draw.}
 
-\item{show_labels}{Logical; show surface abbreviation labels.}
+\item{show_labels}{Logical; show surface abbreviation labels (B, L, M, D,
+O, RB, RL, RM, RD) inside each surface polygon.}
 
 \item{label_size}{Numeric; size of surface labels.}
 
-\item{strata}{Optional column name for stratification. When provided,
-returns a list of ggplots (one per stratum) or a combined plot using
-\code{\link[patchwork:wrap_plots]{patchwork::wrap_plots()}} depending on \code{combine}.}
+\item{tooth_label_size}{Numeric; size of tooth number labels (default 3).}
+
+\item{numbering}{Tooth numbering system for display: \code{"quadrant"} (default),
+\code{"fdi"}, or \code{"universal"}.}
+
+\item{strata}{Optional column name for stratification.}
+
+\item{strata_labels}{Optional named character vector to relabel strata in
+panel titles.}
+
+\item{stats}{Optional data frame of per-group summary statistics to display
+below each panel. Must contain a column matching \code{strata} and numeric
+columns to display (e.g. \code{n}, \code{mean_DMFT}, \code{mean_DT}). See Details.}
+
+\item{stats_test}{Method for comparing stats across strata: \code{"t"} for
+t-test (default), \code{"wilcox"} for Wilcoxon rank-sum, or \code{NULL} to skip.
+P-values are shown as significance stars.}
+
+\item{stats_var}{Column name in \code{stats_raw} to test for differences (e.g.
+\code{"DMFT"}). Required when \code{stats_test} is not NULL.}
+
+\item{stats_raw}{Optional data frame of individual-level data used for
+significance testing. Must contain a column matching \code{strata} and a
+numeric column matching \code{stats_var}. Required when \code{stats_test} is set.}
+
+\item{footnote}{Optional character string displayed below the plot as a
+caption. Use for abbreviation explanations and p-value definitions.}
 
 \item{combine}{Logical; if \code{strata} is set, combine panels into one plot
 (default TRUE) or return a named list.}
@@ -72,7 +106,25 @@ A \code{ggplot} object (or list of ggplots if \code{combine = FALSE}).
 \description{
 Draws a full-arch odontograph with colour-coded tooth surfaces.
 Supports primary and permanent dentition (5–8 teeth per quadrant),
-selective surfaces, and stratification by any grouping variable.
+selective surfaces, stratification, summary statistics with significance
+testing, and configurable tooth numbering.
+}
+\details{
+\strong{Summary statistics:} Pass a data frame to \code{stats} with one row per
+stratum. Example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{stats_df <- data.frame(
+  treatment = c("SDF", "ART"),
+  n = c(120, 115),
+  mean_DT = c(2.3, 2.8),
+  mean_DMFT = c(5.1, 5.6)
+)
+build_odontograph(d, strata = "treatment", stats = stats_df)
+}\if{html}{\out{</div>}}
+
+\strong{Significance stars:} When \code{stats_test} and \code{stats_var} are set and
+raw data is provided via \code{stats_raw}, p-values are computed and appended:
+\verb{***} p < 0.001, \verb{**} p < 0.01, \code{*} p < 0.05, ns otherwise.
 }
 \examples{
 library(tibble)

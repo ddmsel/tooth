@@ -4,8 +4,8 @@
 #'   bind_rows left_join
 #' @importFrom ggplot2 ggplot aes geom_polygon geom_segment geom_path
 #'   geom_text geom_vline geom_hline annotate scale_fill_gradient
-#'   coord_fixed labs theme theme_void element_text margin
-#' @importFrom patchwork wrap_plots
+#'   coord_fixed labs theme theme_void element_text element_rect margin
+#' @importFrom patchwork wrap_plots plot_annotation
 #' @importFrom purrr map_dfr
 #' @importFrom tibble tibble
 "_PACKAGE"

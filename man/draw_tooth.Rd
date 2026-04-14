@@ -15,7 +15,8 @@ draw_tooth(
   y_offset = 0,
   tooth_size = 1,
   show_roots = TRUE,
-  surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl", "rootm", "rootd")
+  surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl", "rootm", "rootd"),
+  display_label = NULL
 )
 }
 \arguments{
@@ -40,6 +41,9 @@ Recognised surfaces: buc, lin, mes, dis, occ, rootb, rootl, rootm, rootd.}
 
 \item{surfaces}{Character vector of surfaces to include. Omit any you
 don't want drawn.}
+
+\item{display_label}{Optional custom label for the tooth number (e.g.
+FDI notation \code{"11"} instead of \code{"ur1"}). When NULL, uses \code{tooth_id}.}
 }
 \value{
 Named list of tibbles: crown, roots, labels, num_label, diags, outline.
