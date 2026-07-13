@@ -49,18 +49,3 @@ test_that("calc_dmfs separates root surfaces", {
   expect_equal(res$DS, 0L)
   expect_equal(res$RDS, 1L)
 })
-
-test_that("calc_dmfs consider_activity toggles the activity requirement", {
-  d <- data.frame(
-    record_id     = "P1",
-    tooth_num     = rep("ur1", 2),
-    tooth_surface = c("buc", "occ"),
-    lesion_code   = c(5L, 0L),
-    act           = c(1L, 0L),   # inactive
-    filling_code  = c(0L, 0L),
-    code          = c(2L, 2L),
-    stringsAsFactors = FALSE
-  )
-  expect_equal(calc_dmfs(d)$DS, 0L)                          # required by default
-  expect_equal(calc_dmfs(d, consider_activity = FALSE)$DS, 1L)
-})

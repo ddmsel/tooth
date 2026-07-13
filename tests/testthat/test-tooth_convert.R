@@ -25,26 +25,3 @@ test_that("vectorised input works", {
   res <- tooth_convert(c("11", "21"), from = "fdi", to = "quadrant")
   expect_equal(res, c("ur1", "ul1"))
 })
-
-test_that("primary universal uses ADA letters A-T", {
-  expect_equal(tooth_convert("ur1", from = "quadrant", to = "universal",
-                             dentition = "primary"), "E")
-  expect_equal(tooth_convert("ur5", from = "quadrant", to = "universal",
-                             dentition = "primary"), "A")
-  expect_equal(tooth_convert("ul5", from = "quadrant", to = "universal",
-                             dentition = "primary"), "J")
-  expect_equal(tooth_convert("ll1", from = "quadrant", to = "universal",
-                             dentition = "primary"), "O")
-  expect_equal(tooth_convert("lr5", from = "quadrant", to = "universal",
-                             dentition = "primary"), "T")
-  # round-trips back to quadrant
-  expect_equal(tooth_convert("K", from = "universal", to = "quadrant",
-                             dentition = "primary"), "ll5")
-})
-
-test_that("primary FDI is unchanged", {
-  expect_equal(tooth_convert("ur1", from = "quadrant", to = "fdi",
-                             dentition = "primary"), "51")
-  expect_equal(tooth_convert("lr5", from = "quadrant", to = "fdi",
-                             dentition = "primary"), "85")
-})

@@ -1,13 +1,4 @@
----
-title: "Introduction to tooth"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Introduction to tooth}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r setup, include = FALSE}
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -15,73 +6,36 @@ knitr::opts_chunk$set(
   fig.height = 5,
   dpi = 100
 )
-```
 
-The **tooth** package provides tools for dental public health research:
-caries index calculation, odontograph heatmap visualisations, and tooth
-numbering conversion.
-
-## Sample Data
-
-The package includes `sim_exam`, a simulated dataset with 20 patients,
-7 teeth per quadrant, and 7 surfaces per tooth (5 coronal + 2 root).
-
-```{r}
+## -----------------------------------------------------------------------------
 library(tooth)
 data(sim_exam)
 head(sim_exam)
-```
 
-## Calculating DMFT
-
-`calc_dmft()` takes long-format surface data and returns one row per
-person with Decayed (DT), Filled (FT), Missing (MT), and combined index
-counts.
-
-```{r}
+## -----------------------------------------------------------------------------
 dmft <- calc_dmft(sim_exam)
 head(dmft)
-```
 
-```{r}
+## -----------------------------------------------------------------------------
 summary(dmft[, c("DT", "FT", "MT", "DMFT", "num_teeth")])
-```
 
-### Stratification
-
-Add a grouping variable and pass it via `strata`:
-
-```{r}
+## -----------------------------------------------------------------------------
 sim_exam$treatment <- ifelse(
   as.numeric(gsub("P", "", sim_exam$record_id)) <= 10, "SDF", "ART"
 )
 
 dmft_by_arm <- calc_dmft(sim_exam, strata = "treatment")
 head(dmft_by_arm)
-```
 
-### Separate Root Caries
-
-```{r}
+## -----------------------------------------------------------------------------
 dmft_root <- calc_dmft(sim_exam, root_lesion_col = "lesion_code")
 head(dmft_root[, c("record_id", "DT", "MT", "DMFT", "RDT")])
-```
 
-`RDT` (root-decayed teeth) is counted independently from coronal `DT`.
-
-## Calculating DMFS
-
-```{r}
+## -----------------------------------------------------------------------------
 dmfs <- calc_dmfs(sim_exam)
 head(dmfs)
-```
 
-## Drawing a Single Tooth
-
-`draw_tooth()` returns polygon geometry for one tooth. Use it to
-understand the surface layout or build custom visualisations.
-
-```{r fig.width=5, fig.height=5}
+## ----fig.width=5, fig.height=5------------------------------------------------
 library(ggplot2)
 
 sv <- data.frame(
@@ -116,19 +70,8 @@ ggplot() +
   coord_fixed() +
   theme_void() +
   theme(plot.background = element_rect(fill = "white", color = NA))
-```
 
-Surface abbreviations: **B** = Buccal, **L** = Lingual, **M** = Mesial,
-**D** = Distal, **O** = Occlusal, **RB** = Root-Buccal,
-**RL** = Root-Lingual.
-
-## Odontograph Heatmaps
-
-### Preparing data
-
-Aggregate surface data to proportions per tooth-surface:
-
-```{r}
+## -----------------------------------------------------------------------------
 library(dplyr)
 
 decay_prop <- sim_exam %>%
@@ -138,23 +81,17 @@ decay_prop <- sim_exam %>%
     prop = mean(lesion_code %in% 3:6 & act == 2, na.rm = TRUE),
     .groups = "drop"
   )
-```
 
-### Basic odontograph
-
-```{r}
-build_odontograph(
+## -----------------------------------------------------------------------------
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries Proportion by Surface",
   legend_title = "Caries\nProportion",
   surfaces = c("buc", "lin", "mes", "dis", "occ")
 )
-```
 
-### With root surfaces (RB and RL)
-
-```{r}
+## -----------------------------------------------------------------------------
 decay_all <- sim_exam %>%
   group_by(tooth_num, tooth_surface) %>%
   summarise(
@@ -162,21 +99,16 @@ decay_all <- sim_exam %>%
     .groups = "drop"
   )
 
-build_odontograph(
+build_odontogram(
   data = decay_all,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 Coronal and Root Surfaces",
   legend_title = "Caries\nProportion",
   surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl")
 )
-```
 
-### No surface labels
-
-Set `show_labels = FALSE` for a cleaner publication-ready look:
-
-```{r}
-build_odontograph(
+## -----------------------------------------------------------------------------
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 Clean Export",
@@ -184,41 +116,26 @@ build_odontograph(
   show_labels = FALSE,
   tooth_label_size = 3.5
 )
-```
 
-### FDI tooth numbering
-
-Display tooth numbers in FDI (ISO 3950) notation instead of quadrant
-format:
-
-```{r}
-build_odontograph(
+## -----------------------------------------------------------------------------
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 FDI Numbering",
   surfaces = c("buc", "lin", "mes", "dis", "occ"),
   numbering = "fdi"
 )
-```
 
-### Fixed colour scale
-
-Use `min_val` and `max_val` to ensure consistent colour scales across
-multiple plots:
-
-```{r}
-build_odontograph(
+## -----------------------------------------------------------------------------
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Fixed Scale (0 to 0.5)",
   surfaces = c("buc", "lin", "mes", "dis", "occ"),
   min_val = 0, max_val = 0.5
 )
-```
 
-### Stratified by treatment arm
-
-```{r fig.height=10}
+## ----fig.height=10------------------------------------------------------------
 decay_by_arm <- sim_exam %>%
   filter(tooth_surface %in% c("buc", "lin", "mes", "dis", "occ")) %>%
   group_by(treatment, tooth_num, tooth_surface) %>%
@@ -227,7 +144,7 @@ decay_by_arm <- sim_exam %>%
     .groups = "drop"
   )
 
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -236,14 +153,9 @@ build_odontograph(
   strata = "treatment",
   ncol = 1
 )
-```
 
-### Custom strata labels
-
-Rename strata panels with `strata_labels`:
-
-```{r fig.height=10}
-build_odontograph(
+## ----fig.height=10------------------------------------------------------------
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -253,14 +165,8 @@ build_odontograph(
                     "ART" = "Atraumatic Restorative Treatment"),
   ncol = 1
 )
-```
 
-### Summary statistics per stratum
-
-Pass a `stats` data frame to display sample size and clinical measures
-below each panel title:
-
-```{r fig.height=10}
+## ----fig.height=10------------------------------------------------------------
 # Compute stats from DMFT results
 dmft_summary <- dmft_by_arm %>%
   group_by(treatment) %>%
@@ -272,7 +178,7 @@ dmft_summary <- dmft_by_arm %>%
   )
 dmft_summary
 
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -281,15 +187,9 @@ build_odontograph(
   stats = dmft_summary,
   ncol = 1
 )
-```
 
-### Significance testing with p-value stars
-
-Add `stats_test`, `stats_var`, and `stats_raw` to compute and display
-significance stars comparing strata:
-
-```{r fig.height=10}
-build_odontograph(
+## ----fig.height=10------------------------------------------------------------
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -301,18 +201,9 @@ build_odontograph(
   stats_raw = dmft_by_arm,
   ncol = 1
 )
-```
 
-Stars follow: `***` p < 0.001, `**` p < 0.01, `*` p < 0.05,
-`ns` otherwise. Use `stats_test = "t"` for a t-test or
-`stats_test = "wilcox"` for a Wilcoxon rank-sum (non-parametric).
-
-### Footnote
-
-Add an abbreviation key and p-value definitions below the plot:
-
-```{r fig.height=11}
-build_odontograph(
+## ----fig.height=11------------------------------------------------------------
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -329,13 +220,8 @@ build_odontograph(
   ),
   ncol = 1
 )
-```
 
-## Primary Dentition
-
-For primary teeth, use `dentition = "primary"` (5 teeth per quadrant):
-
-```{r fig.width=12}
+## ----fig.width=12-------------------------------------------------------------
 primary_teeth <- paste0(
   rep(c("ur", "ul", "lr", "ll"), each = 5), rep(1:5, 4)
 )
@@ -346,7 +232,7 @@ d_primary <- expand.grid(
 )
 d_primary$prop <- runif(nrow(d_primary), 0, 0.5)
 
-build_odontograph(
+build_odontogram(
   data = d_primary,
   dentition = "primary",
   title = "Primary Dentition \u2014 Simulated Caries",
@@ -354,23 +240,13 @@ build_odontograph(
   surfaces = c("buc", "lin", "mes", "dis", "occ"),
   show_roots = FALSE
 )
-```
 
-## Tooth Numbering Conversion
-
-Convert between FDI (ISO 3950), Universal (ADA), and quadrant notation:
-
-```{r}
+## -----------------------------------------------------------------------------
 tooth_convert("11", from = "fdi", to = "quadrant")
 tooth_convert("ur1", from = "quadrant", to = "universal")
 tooth_convert(c("11", "21", "36", "46"), from = "fdi", to = "quadrant")
-```
 
-## Tooth Configuration
-
-Generate a layout table for any arch configuration:
-
-```{r}
+## -----------------------------------------------------------------------------
 tooth_config("permanent", teeth_per_quadrant = 7)
 tooth_config("primary")
-```
+

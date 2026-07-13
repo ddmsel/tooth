@@ -31,19 +31,10 @@ calc_dmfs <- function(data,
                       activity_codes = c(2),
                       filled_codes   = c(1, 2, 4, 5, 6, 7, 8),
                       missing_codes  = c(1),
-                      root_decayed_codes = NULL,
-                      consider_activity         = TRUE,
-                      consider_activity_coronal = NULL,
-                      consider_activity_root    = NULL) {
+                      root_decayed_codes = NULL) {
 
   format <- match.arg(format)
   if (is.null(root_decayed_codes)) root_decayed_codes <- decayed_codes
-
-  # Resolve per-component activity handling (NULL inherits the overall default).
-  ca_coronal <- if (is.null(consider_activity_coronal))
-    consider_activity else consider_activity_coronal
-  ca_root <- if (is.null(consider_activity_root))
-    consider_activity else consider_activity_root
 
   if (format == "wide") {
     data <- pivot_to_long(data, id = id, group = group, strata = strata)
@@ -59,9 +50,7 @@ calc_dmfs <- function(data,
   result <- coronal |>
     dplyr::mutate(
       .ds = ifelse(.data[[lesion_col]] %in% decayed_codes &
-                     (if (ca_coronal)
-                        .data[[activity_col]] %in% activity_codes else TRUE),
-                   1, 0),
+                     .data[[activity_col]] %in% activity_codes, 1, 0),
       .fs = ifelse(.data$.ds < 1 & .data[[filling_col]] %in% filled_codes, 1, 0),
       .ms = ifelse(.data[[tooth_code_col]] %in% missing_codes, 1, 0)
     ) |>
@@ -84,11 +73,7 @@ calc_dmfs <- function(data,
     lcol <- if (root_lesion_col %in% names(root)) root_lesion_col else lesion_col
 
     root_result <- root |>
-      dplyr::mutate(.rds = ifelse(.data[[lcol]] %in% root_decayed_codes &
-                                    (if (ca_root)
-                                       .data[[activity_col]] %in% activity_codes
-                                     else TRUE),
-                                  1, 0)) |>
+      dplyr::mutate(.rds = ifelse(.data[[lcol]] %in% root_decayed_codes, 1, 0)) |>
       dplyr::group_by(dplyr::across(dplyr::all_of(grp))) |>
       dplyr::summarise(RDS = sum(.data$.rds, na.rm = TRUE), .groups = "drop")
 

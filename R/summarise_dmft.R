@@ -2,7 +2,7 @@
 #'
 #' Takes the output of [calc_dmft()] and produces a summary table with
 #' n, mean number of teeth, mean DT, mean DMFT, and optionally other
-#' columns — ready to pass directly to [build_odontogram()] via `stats`
+#' columns — ready to pass directly to [build_odontograph()] via `stats`
 #' and `stats_raw`.
 #'
 #' @param dmft_data Data frame returned by [calc_dmft()], optionally merged
@@ -14,9 +14,9 @@
 #'   \describe{
 #'     \item{stats}{Summary data frame with one row per group, containing
 #'       `n`, `mean_teeth`, `mean_DT`, `mean_DMFT`. Column names match
-#'       what [build_odontogram()] expects for `stats`.}
+#'       what [build_odontograph()] expects for `stats`.}
 #'     \item{raw}{The input data frame, for passing to `stats_raw` in
-#'       [build_odontogram()].}
+#'       [build_odontograph()].}
 #'   }
 #' @export
 #' @examples
@@ -27,8 +27,8 @@
 #' )
 #' result <- summarise_dmft(dmft, "treatment")
 #' result$stats
-#' # Pass directly to build_odontogram:
-#' # build_odontogram(d, strata = "treatment",
+#' # Pass directly to build_odontograph:
+#' # build_odontograph(d, strata = "treatment",
 #' #   stats = result$stats, stats_raw = result$raw,
 #' #   stats_test = "wilcox", stats_var = "DMFT")
 summarise_dmft <- function(dmft_data, group_col, digits = 1) {

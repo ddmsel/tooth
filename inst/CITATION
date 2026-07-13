@@ -1,0 +1,15 @@
+citHeader("To cite the 'tooth' package in publications, please use:")
+
+ver <- if (exists("meta") && !is.null(meta$Version)) meta$Version else "0.5.0"
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "{tooth}: Dental Public Health Indices and Odontogram Visualizations",
+  author   = c(
+    person("David", "Selvaraj"),
+    person("Suchitra", "Nelson")
+  ),
+  year     = "2026",
+  note     = paste("R package version", ver),
+  url      = "https://github.com/ddmsel/tooth"
+)

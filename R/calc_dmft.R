@@ -22,31 +22,8 @@
 #'   surfaces. Default `c("rootb","rootl","rootm","rootd")`.
 #' @param decayed_codes,activity_codes,filled_codes,present_codes,missing_codes
 #'   Numeric vectors defining clinical code categories. Defaults match ICDAS.
-#'   See the *Diagnostic threshold* section for `decayed_codes`.
 #' @param root_decayed_codes Numeric vector for root caries codes (default
 #'   same as `decayed_codes`).
-#' @param consider_activity Logical; overall default for whether a lesion must
-#'   also carry an active-caries code (`activity_codes`) to be counted as
-#'   decayed. `TRUE` (default) requires activity; `FALSE` counts any lesion in
-#'   `decayed_codes` regardless of activity. Standard epidemiological D(3)MFT
-#'   counts all cavitated lesions irrespective of activity, so set `FALSE` to
-#'   match that convention. When `FALSE`, the activity column is not referenced
-#'   and need not be present.
-#' @param consider_activity_coronal,consider_activity_root Optional logical
-#'   overrides for the coronal and root components. `NULL` (default) inherits
-#'   `consider_activity`. Use these to treat crown and root caries differently
-#'   (e.g. require activity coronally but not for roots, where activity is often
-#'   not assessed): `consider_activity_root = FALSE`.
-#'
-#' @section Diagnostic threshold:
-#' The default `decayed_codes = c(3, 4, 5, 6)` implements the **D3 threshold**:
-#' only ICDAS codes 3–6 (localised enamel breakdown through extensive
-#' cavitation) are scored as decayed, while ICDAS 1–2 (non-cavitated initial
-#' enamel lesions) are treated as sound. This D(3)MFT convention is the one
-#' most commonly reported in caries epidemiology. To use the more sensitive D1
-#' threshold that also counts early enamel lesions, pass
-#' `decayed_codes = c(1, 2, 3, 4, 5, 6)`.
-#'
 #'
 #' @section Wide format:
 #' When `format = "wide"`, each row is one person (and optional group).
@@ -82,20 +59,10 @@ calc_dmft <- function(data,
                       filled_codes   = c(1, 2, 4, 5, 6, 7, 8),
                       present_codes  = c(2, 3, 4, 5, 6, 7, 8),
                       missing_codes  = c(1),
-                      root_decayed_codes = NULL,
-                      consider_activity         = TRUE,
-                      consider_activity_coronal = NULL,
-                      consider_activity_root    = NULL) {
+                      root_decayed_codes = NULL) {
 
   format <- match.arg(format)
   if (is.null(root_decayed_codes)) root_decayed_codes <- decayed_codes
-
-  # Resolve per-component activity handling. Component-specific arguments
-  # override the overall `consider_activity` default; NULL means "inherit".
-  ca_coronal <- if (is.null(consider_activity_coronal))
-    consider_activity else consider_activity_coronal
-  ca_root <- if (is.null(consider_activity_root))
-    consider_activity else consider_activity_root
 
   # --- Wide → long conversion ---
   if (format == "wide") {
@@ -114,9 +81,7 @@ calc_dmft <- function(data,
   tooth_level <- coronal |>
     dplyr::mutate(
       .ds = ifelse(.data[[lesion_col]] %in% decayed_codes &
-                     (if (ca_coronal)
-                        .data[[activity_col]] %in% activity_codes else TRUE),
-                   1, 0),
+                     .data[[activity_col]] %in% activity_codes, 1, 0),
       .fs = ifelse(.data$.ds < 1 & .data[[filling_col]] %in% filled_codes, 1, 0),
       .ms = ifelse(.data[[tooth_code_col]] %in% missing_codes, 1, 0),
       .present = ifelse(.data[[tooth_code_col]] %in% present_codes, 1, 0)
@@ -154,10 +119,7 @@ calc_dmft <- function(data,
 
     root_tooth <- root |>
       dplyr::mutate(
-        .rds = ifelse(.data[[lcol]] %in% root_decayed_codes &
-                        (if (ca_root)
-                           .data[[activity_col]] %in% activity_codes else TRUE),
-                      1, 0)
+        .rds = ifelse(.data[[lcol]] %in% root_decayed_codes, 1, 0)
       ) |>
       dplyr::group_by(dplyr::across(dplyr::all_of(grp_tooth))) |>
       dplyr::summarise(RDS = sum(.data$.rds, na.rm=TRUE), .groups="drop")
