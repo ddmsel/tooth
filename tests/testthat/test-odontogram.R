@@ -24,7 +24,7 @@ test_that("draw_tooth respects surfaces argument", {
   expect_equal(nrow(res$roots), 0L)
 })
 
-test_that("build_odontograph returns a ggplot", {
+test_that("build_odontogram returns a ggplot", {
   d <- expand.grid(
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
     tooth_surface = c("buc", "lin", "mes", "dis", "occ"),
@@ -32,14 +32,14 @@ test_that("build_odontograph returns a ggplot", {
   )
   d$prop <- runif(nrow(d))
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "lin", "mes", "dis", "occ"),
                          show_roots = FALSE)
   expect_s3_class(p, "gg")
   expect_s3_class(p, "ggplot")
 })
 
-test_that("build_odontograph handles teeth_per_quadrant", {
+test_that("build_odontogram handles teeth_per_quadrant", {
   d <- expand.grid(
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 7), 1:7),
     tooth_surface = c("buc", "occ"),
@@ -47,12 +47,12 @@ test_that("build_odontograph handles teeth_per_quadrant", {
   )
   d$prop <- runif(nrow(d))
 
-  p <- build_odontograph(d, teeth_per_quadrant = 7,
+  p <- build_odontogram(d, teeth_per_quadrant = 7,
                          surfaces = c("buc", "occ"), show_roots = FALSE)
   expect_s3_class(p, "ggplot")
 })
 
-test_that("build_odontograph strata returns combined plot", {
+test_that("build_odontogram strata returns combined plot", {
   d <- expand.grid(
     treatment = c("A", "B"),
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
@@ -61,13 +61,13 @@ test_that("build_odontograph strata returns combined plot", {
   )
   d$prop <- runif(nrow(d))
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "occ"), show_roots = FALSE,
                          strata = "treatment")
   expect_s3_class(p, "gg")
 })
 
-test_that("build_odontograph strata with combine=FALSE returns list", {
+test_that("build_odontogram strata with combine=FALSE returns list", {
   d <- expand.grid(
     treatment = c("A", "B"),
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
@@ -76,7 +76,7 @@ test_that("build_odontograph strata with combine=FALSE returns list", {
   )
   d$prop <- runif(nrow(d))
 
-  res <- build_odontograph(d, dentition = "primary",
+  res <- build_odontogram(d, dentition = "primary",
                            surfaces = c("buc", "occ"), show_roots = FALSE,
                            strata = "treatment", combine = FALSE)
   expect_type(res, "list")
@@ -92,7 +92,7 @@ test_that("draw_tooth uses display_label", {
   expect_equal(res$num_label$label, "11")
 })
 
-test_that("build_odontograph accepts numbering = fdi", {
+test_that("build_odontogram accepts numbering = fdi", {
   d <- expand.grid(
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
     tooth_surface = c("buc", "occ"),
@@ -100,13 +100,13 @@ test_that("build_odontograph accepts numbering = fdi", {
   )
   d$prop <- runif(nrow(d))
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "occ"), show_roots = FALSE,
                          numbering = "fdi")
   expect_s3_class(p, "ggplot")
 })
 
-test_that("build_odontograph accepts min_val and max_val", {
+test_that("build_odontogram accepts min_val and max_val", {
   d <- expand.grid(
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
     tooth_surface = c("buc", "occ"),
@@ -114,13 +114,13 @@ test_that("build_odontograph accepts min_val and max_val", {
   )
   d$prop <- runif(nrow(d), 0.2, 0.8)
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "occ"), show_roots = FALSE,
                          min_val = 0, max_val = 1)
   expect_s3_class(p, "ggplot")
 })
 
-test_that("build_odontograph accepts footnote", {
+test_that("build_odontogram accepts footnote", {
   d <- expand.grid(
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
     tooth_surface = c("buc", "occ"),
@@ -128,13 +128,13 @@ test_that("build_odontograph accepts footnote", {
   )
   d$prop <- runif(nrow(d))
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "occ"), show_roots = FALSE,
                          footnote = "B=Buccal, O=Occlusal")
   expect_s3_class(p, "ggplot")
 })
 
-test_that("build_odontograph accepts strata_labels and stats", {
+test_that("build_odontogram accepts strata_labels and stats", {
   d <- expand.grid(
     treatment = c("A", "B"),
     tooth_num = paste0(rep(c("ur", "ul", "lr", "ll"), each = 5), 1:5),
@@ -145,7 +145,7 @@ test_that("build_odontograph accepts strata_labels and stats", {
 
   stats_df <- data.frame(treatment = c("A", "B"), n = c(50, 55))
 
-  p <- build_odontograph(d, dentition = "primary",
+  p <- build_odontogram(d, dentition = "primary",
                          surfaces = c("buc", "occ"), show_roots = FALSE,
                          strata = "treatment",
                          strata_labels = c("A" = "SDF", "B" = "ART"),

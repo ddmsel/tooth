@@ -6,7 +6,7 @@
 <img src="man/figures/single_tooth.png" align="right" width="250" />
 
 **tooth** is an R package for dental public health research. It computes
-standardised caries indices and produces publication-ready odontograph
+standardised caries indices and produces publication-ready odontogram
 heatmap visualisations from clinical examination data.
 
 Each tooth is drawn as a five-surface crown diagram with optional root
@@ -16,22 +16,22 @@ glance across the full dental arch.
 
 ### Crown surfaces
 
-| Abbreviation | Surface |
-|---|---|
-| **B** | Buccal |
-| **L** | Lingual |
-| **M** | Mesial |
-| **D** | Distal |
-| **O** | Occlusal |
+| Abbreviation | Surface | Description |
+|---|---|---|
+| **B** | Buccal | Cheek-facing surface |
+| **L** | Lingual | Tongue-facing surface |
+| **M** | Mesial | Forward-facing interproximal surface |
+| **D** | Distal | Backward-facing interproximal surface |
+| **O** | Occlusal | Biting/chewing surface |
 
 ### Root surfaces
 
-| Abbreviation | Surface |
-|---|---|
-| **RB** | Root-Buccal |
-| **RL** | Root-Lingual |
-| **RM** | Root-Mesial |
-| **RD** | Root-Distal |
+| Abbreviation | Surface | Description |
+|---|---|---|
+| **RB** | Root-Buccal | Root surface on the cheek side |
+| **RL** | Root-Lingual | Root surface on the tongue side |
+| **RM** | Root-Mesial | Root surface on the mesial side |
+| **RD** | Root-Distal | Root surface on the distal side |
 
 ## Why tooth?
 
@@ -50,7 +50,7 @@ wide data formats.
   thresholds, activity codes, and restoration codes
 - **Root vs coronal separation** — Tally root caries (`RDT`, `RDS`)
   independently from coronal indices
-- **Odontograph heatmaps** — Colour-coded dental arch diagrams with up
+- **Odontogram heatmaps** — Colour-coded dental arch diagrams with up
   to 9 surfaces per tooth (B, L, M, D, O, RB, RL, RM, RD)
 - **Flexible dentition** — Primary (5 teeth/quadrant) or permanent
   (5–8 teeth/quadrant)
@@ -92,25 +92,25 @@ bars (RB, RL), labelled by surface and coloured by value.
 ### Coronal surfaces — full arch
 
 ```r
-build_odontograph(
+build_odontogram(
   data = decay_data,
   teeth_per_quadrant = 7,
   surfaces = c("buc", "lin", "mes", "dis", "occ")
 )
 ```
 
-<img src="man/figures/odontograph_coronal.png" width="100%" />
+<img src="man/figures/odontogram_coronal.png" width="100%" />
 
 ### With root-buccal (RB) and root-lingual (RL) surfaces
 
 ```r
-build_odontograph(
+build_odontogram(
   data = decay_data,
   surfaces = c("buc", "lin", "mes", "dis", "occ", "rootb", "rootl")
 )
 ```
 
-<img src="man/figures/odontograph_root.png" width="100%" />
+<img src="man/figures/odontogram_root.png" width="100%" />
 
 ### Stratified with summary statistics and footnote
 
@@ -122,7 +122,7 @@ stats_df <- data.frame(
   mean_DMFT = c(5.1, 5.6)
 )
 
-build_odontograph(
+build_odontogram(
   data = decay_by_trt,
   strata = "treatment",
   stats = stats_df,
@@ -130,23 +130,23 @@ build_odontograph(
 )
 ```
 
-<img src="man/figures/odontograph_stratified.png" width="100%" />
+<img src="man/figures/odontogram_stratified.png" width="100%" />
 
 ### FDI tooth numbering
 
 ```r
-build_odontograph(data = decay_data, numbering = "fdi")
+build_odontogram(data = decay_data, numbering = "fdi")
 ```
 
-<img src="man/figures/odontograph_fdi.png" width="100%" />
+<img src="man/figures/odontogram_fdi.png" width="100%" />
 
 ### No surface labels
 
 ```r
-build_odontograph(data = decay_data, show_labels = FALSE)
+build_odontogram(data = decay_data, show_labels = FALSE)
 ```
 
-<img src="man/figures/odontograph_nolabels.png" width="100%" />
+<img src="man/figures/odontogram_nolabels.png" width="100%" />
 
 ## Quick Start
 
@@ -167,10 +167,10 @@ dmft <- calc_dmft(sim_exam, root_lesion_col = "lesion_code")
 # Returns DT (coronal) + RDT (root) separately
 ```
 
-### Odontograph with all options
+### Odontogram with all options
 
 ```r
-build_odontograph(
+build_odontogram(
   data             = decay_data,
   value_col        = "prop",
   teeth_per_quadrant = 7,
@@ -207,7 +207,7 @@ tooth_convert("ur1", from = "quadrant", to = "fdi")
 
 | Function | Description |
 |---|---|
-| `build_odontograph()` | Full-arch heatmap with stratification, stats, numbering |
+| `build_odontogram()` | Full-arch heatmap with stratification, stats, numbering |
 | `draw_tooth()` | Single tooth polygon geometry (up to 9 surfaces) |
 | `calc_dmft()` | DMFT/dmft with root/coronal separation |
 | `calc_dmfs()` | DMFS/dmfs with root/coronal separation |
@@ -220,7 +220,7 @@ tooth_convert("ur1", from = "quadrant", to = "fdi")
 If you use **tooth** in published research, please cite:
 
 ```
-Selvaraj D (2026). tooth: Dental Public Health Indices and Odontograph
+Selvaraj D (2026). tooth: Dental Public Health Indices and Odontogram
 Visualizations. R package version 0.5.0.
 https://github.com/ddmsel/tooth
 ```

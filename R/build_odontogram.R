@@ -1,6 +1,6 @@
-#' Build a surface-level odontograph heatmap
+#' Build a surface-level odontogram heatmap
 #'
-#' Draws a full-arch odontograph with colour-coded tooth surfaces.
+#' Draws a full-arch odontogram with colour-coded tooth surfaces.
 #' Supports primary and permanent dentition (5–8 teeth per quadrant),
 #' selective surfaces, stratification, summary statistics with significance
 #' testing, and configurable tooth numbering.
@@ -57,7 +57,7 @@
 #'   mean_DT = c(2.3, 2.8),
 #'   mean_DMFT = c(5.1, 5.6)
 #' )
-#' build_odontograph(d, strata = "treatment", stats = stats_df)
+#' build_odontogram(d, strata = "treatment", stats = stats_df)
 #' ```
 #'
 #' **Significance stars:** When `stats_test` and `stats_var` are set and
@@ -74,33 +74,33 @@
 #'   stringsAsFactors = FALSE
 #' )
 #' d$prop <- runif(nrow(d))
-#' build_odontograph(d, teeth_per_quadrant = 7)
-build_odontograph <- function(data, value_col = "prop",
-                              dentition = "permanent",
-                              teeth_per_quadrant = NULL,
-                              title = "Surface Odontograph",
-                              subtitle = NULL,
-                              color_low = "#FFFFFF",
-                              color_high = "#C62828",
-                              na_color = "grey90",
-                              min_val = NULL, max_val = NULL,
-                              legend_title = "Proportion",
-                              show_roots = TRUE,
-                              surfaces = c("buc","lin","mes","dis","occ",
-                                           "rootb","rootl","rootm","rootd"),
-                              show_labels = TRUE,
-                              label_size = 1.8,
-                              tooth_label_size = 3,
-                              numbering = c("quadrant", "fdi", "universal"),
-                              strata = NULL,
-                              strata_labels = NULL,
-                              stats = NULL,
-                              stats_test = NULL,
-                              stats_var = NULL,
-                              stats_raw = NULL,
-                              footnote = NULL,
-                              combine = TRUE,
-                              ncol = 1) {
+#' build_odontogram(d, teeth_per_quadrant = 7)
+build_odontogram <- function(data, value_col = "prop",
+                             dentition = "permanent",
+                             teeth_per_quadrant = NULL,
+                             title = "Surface Odontogram",
+                             subtitle = NULL,
+                             color_low = "#FFFFFF",
+                             color_high = "#C62828",
+                             na_color = "grey90",
+                             min_val = NULL, max_val = NULL,
+                             legend_title = "Proportion",
+                             show_roots = TRUE,
+                             surfaces = c("buc","lin","mes","dis","occ",
+                                          "rootb","rootl","rootm","rootd"),
+                             show_labels = TRUE,
+                             label_size = 1.8,
+                             tooth_label_size = 3,
+                             numbering = c("quadrant", "fdi", "universal"),
+                             strata = NULL,
+                             strata_labels = NULL,
+                             stats = NULL,
+                             stats_test = NULL,
+                             stats_var = NULL,
+                             stats_raw = NULL,
+                             footnote = NULL,
+                             combine = TRUE,
+                             ncol = 1) {
 
   numbering <- match.arg(numbering)
 
@@ -166,7 +166,7 @@ build_odontograph <- function(data, value_col = "prop",
         subtitle
       }
 
-      build_odontograph(
+      build_odontogram(
         data = sub_data, value_col = value_col,
         dentition = dentition, teeth_per_quadrant = teeth_per_quadrant,
         title = paste0(title, " \u2014 ", display_label),

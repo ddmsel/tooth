@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ```
 
 The **tooth** package provides tools for dental public health research:
-caries index calculation, odontograph heatmap visualisations, and tooth
+caries index calculation, odontogram heatmap visualisations, and tooth
 numbering conversion.
 
 ## Sample Data
@@ -122,7 +122,7 @@ Surface abbreviations: **B** = Buccal, **L** = Lingual, **M** = Mesial,
 **D** = Distal, **O** = Occlusal, **RB** = Root-Buccal,
 **RL** = Root-Lingual.
 
-## Odontograph Heatmaps
+## Odontogram Heatmaps
 
 ### Preparing data
 
@@ -140,10 +140,10 @@ decay_prop <- sim_exam %>%
   )
 ```
 
-### Basic odontograph
+### Basic odontogram
 
 ```{r}
-build_odontograph(
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries Proportion by Surface",
@@ -162,7 +162,7 @@ decay_all <- sim_exam %>%
     .groups = "drop"
   )
 
-build_odontograph(
+build_odontogram(
   data = decay_all,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 Coronal and Root Surfaces",
@@ -176,7 +176,7 @@ build_odontograph(
 Set `show_labels = FALSE` for a cleaner publication-ready look:
 
 ```{r}
-build_odontograph(
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 Clean Export",
@@ -192,7 +192,7 @@ Display tooth numbers in FDI (ISO 3950) notation instead of quadrant
 format:
 
 ```{r}
-build_odontograph(
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 FDI Numbering",
@@ -207,7 +207,7 @@ Use `min_val` and `max_val` to ensure consistent colour scales across
 multiple plots:
 
 ```{r}
-build_odontograph(
+build_odontogram(
   data = decay_prop,
   teeth_per_quadrant = 7,
   title = "Fixed Scale (0 to 0.5)",
@@ -227,7 +227,7 @@ decay_by_arm <- sim_exam %>%
     .groups = "drop"
   )
 
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -243,7 +243,7 @@ build_odontograph(
 Rename strata panels with `strata_labels`:
 
 ```{r fig.height=10}
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -272,7 +272,7 @@ dmft_summary <- dmft_by_arm %>%
   )
 dmft_summary
 
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -289,7 +289,7 @@ Add `stats_test`, `stats_var`, and `stats_raw` to compute and display
 significance stars comparing strata:
 
 ```{r fig.height=10}
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -312,7 +312,7 @@ Stars follow: `***` p < 0.001, `**` p < 0.01, `*` p < 0.05,
 Add an abbreviation key and p-value definitions below the plot:
 
 ```{r fig.height=11}
-build_odontograph(
+build_odontogram(
   data = decay_by_arm,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -346,7 +346,7 @@ d_primary <- expand.grid(
 )
 d_primary$prop <- runif(nrow(d_primary), 0, 0.5)
 
-build_odontograph(
+build_odontogram(
   data = d_primary,
   dentition = "primary",
   title = "Primary Dentition \u2014 Simulated Caries",

@@ -3,7 +3,7 @@
 #' A simulated surface-level dental examination dataset for 20 patients,
 #' each with 7 teeth per quadrant (28 teeth) and 5 coronal surfaces plus
 #' 2 root surfaces per tooth. Designed for demonstrating and testing
-#' [calc_dmft()], [calc_dmfs()], and [build_odontograph()].
+#' [calc_dmft()], [calc_dmfs()], and [build_odontogram()].
 #'
 #' @format A data frame with 9,800 rows and 6 columns:
 #' \describe{

@@ -43,14 +43,14 @@ p0 <- ggplot() +
         plot.background = element_rect(fill = "white", color = NA))
 ggsave(file.path(outdir, "single_tooth.png"), p0, width = 5, height = 5, dpi = 200)
 
-# --- Image 2: Coronal odontograph ---
+# --- Image 2: Coronal odontogram ---
 decay_coronal <- sim_exam |>
   dplyr::filter(tooth_surface %in% c("buc","lin","mes","dis","occ")) |>
   dplyr::group_by(tooth_num, tooth_surface) |>
   dplyr::summarise(prop = mean(lesion_code %in% 3:6 & act == 2, na.rm = TRUE),
                    .groups = "drop")
 
-p1 <- build_odontograph(
+p1 <- build_odontogram(
   data = decay_coronal,
   teeth_per_quadrant = 7,
   title = "Active Caries by Surface",
@@ -59,7 +59,7 @@ p1 <- build_odontograph(
   surfaces = c("buc","lin","mes","dis","occ"),
   tooth_label_size = 3
 )
-ggsave(file.path(outdir, "odontograph_coronal.png"), p1, width = 14, height = 5, dpi = 200)
+ggsave(file.path(outdir, "odontogram_coronal.png"), p1, width = 14, height = 5, dpi = 200)
 
 # --- Image 3: With root surfaces ---
 decay_all <- sim_exam |>
@@ -67,7 +67,7 @@ decay_all <- sim_exam |>
   dplyr::summarise(prop = mean(lesion_code %in% 3:6 & act == 2, na.rm = TRUE),
                    .groups = "drop")
 
-p2 <- build_odontograph(
+p2 <- build_odontogram(
   data = decay_all,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 Coronal and Root Surfaces",
@@ -76,7 +76,7 @@ p2 <- build_odontograph(
   surfaces = c("buc","lin","mes","dis","occ","rootb","rootl"),
   tooth_label_size = 3
 )
-ggsave(file.path(outdir, "odontograph_root.png"), p2, width = 14, height = 5, dpi = 200)
+ggsave(file.path(outdir, "odontogram_root.png"), p2, width = 14, height = 5, dpi = 200)
 
 # --- Image 4: Stratified with stats and footnote ---
 sim_exam$treatment <- ifelse(
@@ -96,7 +96,7 @@ stats_df <- data.frame(
   mean_DMFT = c(6.8, 7.5)
 )
 
-p3 <- build_odontograph(
+p3 <- build_odontogram(
   data = decay_strat,
   teeth_per_quadrant = 7,
   title = "Active Caries",
@@ -107,10 +107,10 @@ p3 <- build_odontograph(
   footnote = "B=Buccal, L=Lingual, M=Mesial, D=Distal, O=Occlusal. * p<0.05, ** p<0.01, *** p<0.001.",
   ncol = 1
 )
-ggsave(file.path(outdir, "odontograph_stratified.png"), p3, width = 14, height = 10, dpi = 200)
+ggsave(file.path(outdir, "odontogram_stratified.png"), p3, width = 14, height = 10, dpi = 200)
 
 # --- Image 5: No labels ---
-p4 <- build_odontograph(
+p4 <- build_odontogram(
   data = decay_coronal,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 No Surface Labels",
@@ -120,10 +120,10 @@ p4 <- build_odontograph(
   show_labels = FALSE,
   tooth_label_size = 3
 )
-ggsave(file.path(outdir, "odontograph_nolabels.png"), p4, width = 14, height = 5, dpi = 200)
+ggsave(file.path(outdir, "odontogram_nolabels.png"), p4, width = 14, height = 5, dpi = 200)
 
 # --- Image 6: FDI numbering ---
-p5 <- build_odontograph(
+p5 <- build_odontogram(
   data = decay_coronal,
   teeth_per_quadrant = 7,
   title = "Active Caries \u2014 FDI Numbering",
@@ -132,6 +132,6 @@ p5 <- build_odontograph(
   numbering = "fdi",
   tooth_label_size = 3
 )
-ggsave(file.path(outdir, "odontograph_fdi.png"), p5, width = 14, height = 5, dpi = 200)
+ggsave(file.path(outdir, "odontogram_fdi.png"), p5, width = 14, height = 5, dpi = 200)
 
 cat("README images saved to", outdir, "\n")

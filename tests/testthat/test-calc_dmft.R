@@ -141,3 +141,55 @@ test_that("calc_dmft handles all-sound data", {
   expect_equal(res$DMFT, 0L)
   expect_equal(res$DT_yn, 0L)
 })
+
+test_that("calc_dmft consider_activity toggles the activity requirement", {
+  d <- data.frame(
+    record_id     = "P1",
+    tooth_num     = rep("ur1", 2),
+    tooth_surface = c("buc", "occ"),
+    lesion_code   = c(5L, 0L),   # cavitated lesion on buccal surface
+    act           = c(1L, 0L),   # but coded INACTIVE
+    filling_code  = c(0L, 0L),
+    code          = c(2L, 2L),
+    stringsAsFactors = FALSE
+  )
+
+  # Default: activity required -> inactive cavitated lesion not counted
+  expect_equal(calc_dmft(d)$DT, 0L)
+  # Ignore activity -> cavitated lesion counted regardless of activity
+  expect_equal(calc_dmft(d, consider_activity = FALSE)$DT, 1L)
+})
+
+test_that("calc_dmft consider_activity = FALSE works without an activity column", {
+  d <- data.frame(
+    record_id     = "P1",
+    tooth_num     = rep("ur1", 2),
+    tooth_surface = c("buc", "occ"),
+    lesion_code   = c(5L, 0L),
+    filling_code  = c(0L, 0L),
+    code          = c(2L, 2L),
+    stringsAsFactors = FALSE
+  )
+  expect_equal(calc_dmft(d, consider_activity = FALSE)$DT, 1L)
+})
+
+test_that("calc_dmft consider_activity_root overrides the coronal setting", {
+  d <- data.frame(
+    record_id     = "P1",
+    tooth_num     = rep("ur1", 3),
+    tooth_surface = c("buc", "rootb", "rootl"),
+    lesion_code   = c(0L, 5L, 0L),  # cavitated root lesion
+    act           = c(0L, 1L, 0L),  # coded inactive
+    filling_code  = rep(0L, 3),
+    code          = rep(2L, 3),
+    stringsAsFactors = FALSE
+  )
+  # Default requires activity for roots too -> inactive root lesion not counted
+  expect_equal(calc_dmft(d, root_lesion_col = "lesion_code")$RDT, 0L)
+  # Turn activity off for roots only -> counted
+  expect_equal(
+    calc_dmft(d, root_lesion_col = "lesion_code",
+              consider_activity_root = FALSE)$RDT,
+    1L
+  )
+})
