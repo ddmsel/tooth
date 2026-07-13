@@ -6,13 +6,15 @@
 <img src="man/figures/single_tooth.png" align="right" width="250" />
 
 **tooth** is an R package for dental public health research. It computes
-standardised caries indices and produces publication-ready odontogram
-heatmap visualisations from clinical examination data.
+standardised caries indices and produces publication-ready **odontogram**
+heatmaps from clinical examination data.
 
-Each tooth is drawn as a five-surface crown diagram with optional root
-surface bars. Surface values are mapped to a colour gradient so you can
-see caries patterns, treatment outcomes, or any per-surface metric at a
-glance across the full dental arch.
+An *odontogram* is a whole-mouth dental chart that arranges every tooth in
+its anatomical position across the four quadrants. **tooth** renders each
+tooth as a five-surface crown diagram with optional root-surface bars, then
+maps your surface values onto a colour gradient — so caries patterns,
+treatment outcomes, or any per-tooth-surface metric are visible at a glance
+across the whole arch.
 
 ### Crown surfaces
 
@@ -50,8 +52,8 @@ wide data formats.
   thresholds, activity codes, and restoration codes
 - **Root vs coronal separation** — Tally root caries (`RDT`, `RDS`)
   independently from coronal indices
-- **Odontogram heatmaps** — Colour-coded dental arch diagrams with up
-  to 9 surfaces per tooth (B, L, M, D, O, RB, RL, RM, RD)
+- **Odontogram heatmaps** — Colour-coded whole-arch dental charts with
+  up to 9 surfaces per tooth (B, L, M, D, O, RB, RL, RM, RD)
 - **Flexible dentition** — Primary (5 teeth/quadrant) or permanent
   (5–8 teeth/quadrant)
 - **Stratification with statistics** — Facet by treatment arm with
@@ -89,7 +91,7 @@ bars (RB, RL), labelled by surface and coloured by value.
 
 <img src="man/figures/single_tooth.png" width="300" />
 
-### Coronal surfaces — full arch
+### Coronal odontogram — full arch
 
 ```r
 build_odontogram(
@@ -101,7 +103,7 @@ build_odontogram(
 
 <img src="man/figures/odontogram_coronal.png" width="100%" />
 
-### With root-buccal (RB) and root-lingual (RL) surfaces
+### Odontogram with root-buccal (RB) and root-lingual (RL) surfaces
 
 ```r
 build_odontogram(
@@ -112,7 +114,7 @@ build_odontogram(
 
 <img src="man/figures/odontogram_root.png" width="100%" />
 
-### Stratified with summary statistics and footnote
+### Stratified odontogram with summary statistics
 
 ```r
 stats_df <- data.frame(
@@ -132,7 +134,7 @@ build_odontogram(
 
 <img src="man/figures/odontogram_stratified.png" width="100%" />
 
-### FDI tooth numbering
+### Odontogram with FDI numbering
 
 ```r
 build_odontogram(data = decay_data, numbering = "fdi")
@@ -140,7 +142,7 @@ build_odontogram(data = decay_data, numbering = "fdi")
 
 <img src="man/figures/odontogram_fdi.png" width="100%" />
 
-### No surface labels
+### Odontogram without surface labels
 
 ```r
 build_odontogram(data = decay_data, show_labels = FALSE)
@@ -215,13 +217,26 @@ tooth_convert("ur1", from = "quadrant", to = "fdi")
 | `tooth_config()` | Arch layout configuration |
 | `tooth_convert()` | FDI ↔ Universal ↔ quadrant numbering |
 
+## Authors
+
+- **David Selvaraj, MBA, PhD** — *author, maintainer*
+  Department of Community Dentistry, Case Western Reserve University School
+  of Dental Medicine, Cleveland, OH.
+  <dms256@case.edu> · [ORCID: 0000-0003-4055-9493](https://orcid.org/0000-0003-4055-9493)
+
+- **Suchitra Nelson, PhD** — *author*
+  Department of Community Dentistry, Case Western Reserve University School
+  of Dental Medicine, Cleveland, OH; and Department of Population and
+  Quantitative Health Sciences, Case Western Reserve University School of
+  Medicine, Cleveland, OH.
+
 ## Citation
 
 If you use **tooth** in published research, please cite:
 
 ```
-Selvaraj D (2026). tooth: Dental Public Health Indices and Odontogram
-Visualizations. R package version 0.5.0.
+Selvaraj D, Nelson S (2026). tooth: Dental Public Health Indices and
+Odontogram Visualizations. R package version 0.5.0.
 https://github.com/ddmsel/tooth
 ```
 
