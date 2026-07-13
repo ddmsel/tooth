@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: David Selvaraj \email{dms256@case.edu} (\href{https://orcid.org/0000-0003-4055-9493}{ORCID}) (Department of Community Dentistry, Case Western Reserve University School of Dental Medicine, Cleveland, OH)
+\strong{Maintainer}: David Selvaraj \email{dms256@case.edu} (\href{https://orcid.org/0000-0003-4055-9493}{ORCID}) (Department of Community Dentistry, Case Western Reserve University School of Dental Medicine, Cleveland, OH) [copyright holder]
 
 Authors:
 \itemize{

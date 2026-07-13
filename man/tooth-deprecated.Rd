@@ -34,10 +34,8 @@ d <- expand.grid(
   stringsAsFactors = FALSE
 )
 d$prop <- runif(nrow(d))
-# Old name still works, with a warning:
-\dontrun{
-build_odontograph(d, teeth_per_quadrant = 7)
-}
+# Old name still works but warns; wrap to keep example output clean:
+suppressWarnings(build_odontograph(d, teeth_per_quadrant = 7))
 # Preferred:
 build_odontogram(d, teeth_per_quadrant = 7)
 }
